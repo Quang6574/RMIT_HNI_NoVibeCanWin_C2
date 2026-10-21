@@ -28,17 +28,16 @@ Built with [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=r
 
 ## Setup
 
-<!-- How to install and run the prototype. -->
+<!-- Sample Instructions -->
 
-<!-- Download the code from Github, unzip into a folder called fairbox -->
-cd "..\fairenrol"
+<!-- Download the sourcecodes.zip from GitHub, unzip into a folder called fairenrol -->
+cd "fairenrol"
 <!-- Open Docker Desktop -->
 docker run -d -p 8080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=password tideorg/tidecloak-dev:latest
-<!-- Open http://localhost:8080/, create new app, set URIs, download tidecloak.json -->
+<!-- Open http://localhost:8080/, create new app, set URIs, download tidecloak.json to the public folder -->
 <!-- Install all deps -->
 npm.cmd install
-npm.cmd run dev.
+npm.cmd run dev
 <!-- Open http://localhost:5173/ -->
 <!-- Click Login with TideCloak -->
 …
-
