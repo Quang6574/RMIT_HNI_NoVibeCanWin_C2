@@ -1,7 +1,9 @@
 # Demo script — 2:00 maximum
 
 **Status: plan, not a record of completed work.** No end-to-end TideCloak run has happened
-yet. This script is written to be recorded only after the preconditions below are true.
+yet for the complete four-account voting flow. The integrated app at `spend-approval/`
+has real sign-in and a live missing-role refusal verified; see its SECURITY-TESTS.md.
+This script is written to be recorded only after the preconditions below are true.
 Any line whose precondition is not met must be cut, not performed.
 
 ## The one sentence the video must land

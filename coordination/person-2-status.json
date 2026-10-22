@@ -1,0 +1,50 @@
+{
+  "current_gate": "G4",
+  "task": "Person 1 UI integrated with Person 2 authenticated API and SQLite; live role/governance checks pending",
+  "status": "awaiting-review",
+  "last_command": "npm test; npm run build; live signed-in UI and HTTP checks",
+  "last_error": null,
+  "files_changed": [
+    ".gitignore",
+    "README.md",
+    "contract.ts",
+    "HANDOFF-TO-PERSON-2.md",
+    "demo/DEMO-SCRIPT.md",
+    "demo/evidence/",
+    "spend-approval/",
+    "coordination/person-2-status.json",
+    "coordination/person-2-log.txt"
+  ],
+  "tests": {
+    "display_fixtures_passing": 8,
+    "names": [
+      "Rules and authorization",
+      "Cryptographic verifier",
+      "Body boundary",
+      "SQLite persistence, rollback and concurrent connections",
+      "Bearer API transport and exact cents",
+      "Shared display fixtures"
+    ],
+    "failing": 0,
+    "passing": 20
+  },
+  "evidence": [
+    "20 automated tests and 8 display fixtures pass",
+    "Integrated production build and TypeScript pass",
+    "Real Tide session identity and scoped request list succeed",
+    "Live missing-requester-role submission returns 403",
+    "All five endpoints return 401 without token; invalid bearer returns 401",
+    "No runtime fixture adapter or simulated identity switch",
+    "Three existing reviewer IDs populated in ignored local environment",
+    "Current remote Person 1 work fast-forwarded to d5e1baa; no push"
+  ],
+  "unverified_assumptions": [
+    "Four-account enrollment and governed spending role assignments",
+    "Live create and three-account voting outcomes",
+    "Independent quorum enforcement and alternate role-grant paths",
+    "PKCE enforcement and role revocation latency",
+    "Completed demo MP4"
+  ],
+  "needs_human": "Complete Tide account linking and governed role review; run live voting and independent quorum checks, then record the demo. See spend-approval/REMAINING.md.",
+  "timestamp": "2026-10-22T09:20:55.1859903Z"
+}

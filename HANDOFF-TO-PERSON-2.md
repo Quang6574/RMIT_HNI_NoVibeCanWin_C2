@@ -1,5 +1,7 @@
 # Handoff from Person 1 → Person 2
 
+> Integration update, 22 October 2026: the live application now resides in `spend-approval/`, with real bearer-authenticated APIs and SQLite. The sandbox remains a development reference. See `spend-approval/SECURITY-TESTS.md` and `spend-approval/REMAINING.md` for current evidence and outstanding live checks. The historical handoff below describes Person 1's delivery before integration.
+
 **Status as of 2026-10-22.** Person 1's scope is built: a working UI sandbox, the frozen
 contract, verified display logic, fixtures, and the demo plan. **Nothing has ever been run
 against a real server or a real login** — Person 1 has no Docker. Integration is yours.

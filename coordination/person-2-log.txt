@@ -1,0 +1,7 @@
+2026-10-22 integration complete locally.
+Person 1 remote work fast-forwarded to d5e1baa; original Person 2 tracked changes preserved in stash and Person 2-specific coordination files.
+spend-approval now uses real Tide sign-in, bearer APIs, fixed reviewer assignments and SQLite. No live fixture adapter or fake identity selection.
+20 automated tests pass; 8 shared display fixtures match; production build and TypeScript pass.
+Real signed-in GET /api/me and GET /api/requests return 200. A real roleless account POST /api/requests returns 403. Missing-token calls on all five endpoints and an invalid bearer return 401.
+The three local reviewer IDs are populated. User linking, governed role grants, independent quorum checks, live voting and the Challenge 2 video remain.
+No credentials, tokens, adapter configuration or database included in Git. No GitHub push performed.

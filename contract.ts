@@ -1,10 +1,7 @@
 // Shared contract — Challenge 2 spend approval.
 //
-// DRAFT: field-for-field with MASTER-PLAN.md §4. Awaiting Person 2's agreement before
-// anyone builds against it. Types only — no runtime code.
-//
-// Location note: kept at the repository root while Person 2's Next.js app does not exist.
-// It is intended to land unchanged at <next-app>/types/contract.ts.
+// Agreed field-for-field with MASTER-PLAN.md §4. Both apps re-export this contract.
+// Types only — no runtime authorization code.
 
 export type RoleSlot = 'senior_a' | 'senior_b' | 'ceo';
 export type Vote     = 'approve' | 'reject';

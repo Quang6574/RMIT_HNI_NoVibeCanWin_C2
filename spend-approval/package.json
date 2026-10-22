@@ -1,0 +1,28 @@
+{
+  "name": "spend-approval",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --experimental-strip-types --test tests/rules.test.ts tests/store.test.ts tests/auth.test.ts tests/body.test.ts tests/api-client.test.ts && node --experimental-strip-types ../ui-sandbox/scripts/check-explain.mjs"
+  },
+  "dependencies": {
+    "next": "16.x",
+    "react": "19.x",
+    "react-dom": "19.x",
+    "@tidecloak/nextjs": "^0.13.11",
+    "@tidecloak/verify": "^0.13.33"
+  },
+  "overrides": {
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.13",
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  },
+  "engines": { "node": ">=22.13.0 <25" }
+}
