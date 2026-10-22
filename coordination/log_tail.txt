@@ -1,1 +1,68 @@
-(no run yet — worker overwrites this with the last ~100 lines of real stdout/stderr once work starts)
+=== P1-G2 follow-up fixes - real output captured 2026-10-22T13:19:29.6458366+07:00 ===
+PS> Select-String -Path lib-ui\explain-status.ts -Pattern "^import|Binding UI rule|status badge always|matchesServerStatus. is false"
+1: import type { Decision, RoleSlot, SpendRequest, Status } from '../contract';
+16: * Binding UI rule for P1-G1:
+17: *   - The status badge always renders `request.status` from the server.
+20: *   - When `matchesServerStatus` is false, the UI must surface the discrepancy visibly
+PS> node --experimental-strip-types --input-type=module - < fixture re-run
+MATCH r-001 | progress="0 of 3 approved" | derivedStatus=pending | matchesServerStatus=true
+  explanation: "Pending. No reviewer has voted yet. Senior reviewer A, senior reviewer B and the CEO reviewer all still need to respond."
+MATCH r-002 | progress="1 of 3 approved" | derivedStatus=pending | matchesServerStatus=true
+  explanation: "Pending. Senior reviewer A approved. Senior reviewer B and the CEO reviewer have not voted. All three distinct approvals are required."
+MATCH r-003 | progress="2 of 3 approved" | derivedStatus=pending | matchesServerStatus=true
+  explanation: "Pending. Both senior reviewers approved, but the CEO reviewer has not voted. All three distinct approvals are required."
+MATCH r-004 | progress="0 of 3 approved" | derivedStatus=denied | matchesServerStatus=true
+  explanation: "Denied. Senior reviewer B rejected this request. One rejection is final; later approvals cannot reverse it."
+MATCH r-005 | progress="2 of 3 approved" | derivedStatus=denied | matchesServerStatus=true
+  explanation: "Denied. The CEO reviewer rejected this request after both senior reviewers approved. One rejection is final; later approvals cannot reverse it."
+MATCH r-006 | progress="3 of 3 approved" | derivedStatus=approved | matchesServerStatus=true
+  explanation: "Approved. Senior reviewer A, senior reviewer B and the CEO reviewer all approved this request."
+MATCH r-007 | progress="2 of 3 approved" | derivedStatus=denied | matchesServerStatus=true
+  explanation: "Denied. Senior reviewer A rejected this request, and that decision is final. Later approvals from senior reviewer B and the CEO reviewer cannot reverse it."
+MATCH r-008 | progress="2 of 3 approved" | derivedStatus=pending | matchesServerStatus=true
+  explanation: "Pending. Senior reviewer A and the CEO reviewer approved, but senior reviewer B has not voted. All three distinct approvals are required."
+RESULT: 8 matched unchanged, 0 failed, 8 fixtures
+exit=0
+PS> node --experimental-strip-types --input-type=module - < equal-timestamp and divergent-status cases
+EQUAL-TIMESTAMP approve-first: {"progress":"1 of 3 approved","explanation":"Denied. The CEO reviewer rejected this request after senior reviewer A approved. One rejection is final; later approvals cannot reverse it.","derivedStatus":"denied","matchesServerStatus":true}
+EQUAL-TIMESTAMP reject-first:  {"progress":"1 of 3 approved","explanation":"Denied. The CEO reviewer rejected this request after senior reviewer A approved. One rejection is final; later approvals cannot reverse it.","derivedStatus":"denied","matchesServerStatus":true}
+DIVERGENT all-approved/server-pending: {"progress":"3 of 3 approved","explanation":"Approved. Senior reviewer A, senior reviewer B and the CEO reviewer all approved this request.","derivedStatus":"approved","matchesServerStatus":false}
+DIVERGENT rejection/server-approved: {"progress":"2 of 3 approved","explanation":"Denied. Senior reviewer A rejected this request, and that decision is final. Later approvals from senior reviewer B and the CEO reviewer cannot reverse it.","derivedStatus":"denied","matchesServerStatus":false}
+PASS - equal timestamp (approve first) accounts for the approval
+PASS - equal timestamp (reject first) accounts for the approval
+PASS - equal timestamp derivedStatus is denied
+PASS - equal timestamp matchesServerStatus is true
+PASS - divergent approved/pending exposes matchesServerStatus false
+PASS - divergent denied/approved exposes matchesServerStatus false
+PASS - explanation still uses the derived verdict
+RESULT: 7 passed, 0 failed, 7 edge checks
+exit=0
+PS> node --experimental-strip-types --input-type=module - < prior regression checks
+PASS - shuffled approvals still Approved
+PASS - r-007 reversed still final Denied
+PASS - r-005 without rejection is Pending
+PASS - wrong-sub approval not counted
+PASS - duplicate approval stays 1 of 3
+PASS - same-slot reject wins
+RESULT: 6 passed, 0 failed, 6 regression checks
+exit=0
+PS> git status --short
+ M AGENT-monitor.md
+ M AGENT-worker.md
+ M README.md
+ M coordination/instructions.md
+ M coordination/log_tail.txt
+ M coordination/status.json
+?? .mcp.json
+?? contract.ts
+?? coordination/PROMPTS.md
+?? demo/
+?? fixtures/
+?? lib-ui/
+=== log lines before status check: 61 ===
+PS> node - < status.json schema check
+status.json parsed OK: status=awaiting-review, gate=P1-G2, stub_present=false
+files_changed=3, evidence=8, unverified_assumptions=6
+schema keys missing=none, extra=none
+RESULT: PASS - schema shape matches AGENT-worker.md
+=== final log lines: 67 ===

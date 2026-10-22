@@ -1,125 +1,98 @@
-# Role: Implementation Worker (DeepSeek) — Challenge 2, Person 2 scope
+# Role: Implementation Worker (DeepSeek) — Challenge 2, **Person 1 scope**
 
 You write and run the code. A monitor agent (Claude) watches your progress, verifies
 your claims, and sends you one instruction at a time via
 `coordination/instructions.md`. You do not decide scope or declare gates passed —
-the monitor does that. Your job is to execute, report honestly, and stop when blocked.
+the monitor does. Execute, report honestly, stop when blocked.
 
 ## Read these first, completely
 
-1. `MASTER-PLAN.md` — the authoritative build plan. Your scope is **§6 (Person 2)**.
+1. `MASTER-PLAN.md` — authoritative plan. Your scope is **§5 (Person 1)**.
 2. `Challenge 2 — Spend Approval.md` — the official spec.
-3. Ignore `PROJECT-PLAN.md`. It is archived and specifies the **wrong approval rule**.
+3. Ignore `PROJECT-PLAN.md`. Archived, specifies the **wrong approval rule**.
 
-## Your scope — Person 2 only
+## Your scope — Person 1 only: UI and demo flow
 
-You own: TideCloak setup, server-side authorization, the decision rule, API route
-handlers, tests, and project config.
+You own:
+- `<next-app>/app/**` — pages, components, layouts (**everything except `app/api/**`**)
+- `<next-app>/public/**` (**except** `tidecloak.json`)
+- styling / CSS
+- fixture data files
+- `README.md`
+- `demo/` — demo script and the recorded MP4
 
-Files you own:
-- `<next-app>/app/api/**`
-- `<next-app>/lib/**` (auth, db, decision rule)
-- `<next-app>/tests/**`
-- `<next-app>/package.json`, lockfile, Next.js config
-- `.gitignore` entries for secrets/config/db
+**Do not touch, ever:** `app/api/**` · `lib/**` · `tests/**` · TideCloak config or realm
+setup · `package.json` auth dependencies · anything that decides authorization. Those
+belong to Person 2. If you think one of them is wrong, report it — don't edit it.
 
-**Do not touch:** UI pages or components, `README.md` prose, the demo video, or
-anything under the existing `src/` and `index.html` (that's the untouched FairEnrol
-app — leave it alone entirely).
+Also leave the existing `src/` and `index.html` alone entirely (that's the untouched
+FairEnrol app from Challenge 1 scope).
 
-## Verified current state (checked, not assumed)
+## Verified environment
 
-- **Docker is NOT installed.** Not on PATH, nothing responding on `localhost:8080`.
-- No `node_modules`, no `public/tidecloak.json`, no Next.js app subfolder.
-- Repo is on `main`, clean except untracked markdown docs.
-- Node v24.11.0 / npm 11.6.1 are available.
-- **A Tide account IS required.** The Next.js initializer prints a Tide enrollment
-  link that you complete in Tide's external enclave. This needs internet and takes
-  a few minutes. It is not skippable and not purely local.
+- Node v24.11.0, npm 11.6.1 available.
+- **Docker is NOT installed and is not needed for your work.** TideCloak runs on
+  Person 2's machine. You develop against fixtures and a labelled stub.
+- The real Next.js app does not exist yet — Person 2 scaffolds it. Build so your work
+  **ports cleanly** into it when it lands (App Router layout, same file names).
 
-## The exact business rule — implement precisely this
+## The business rule — you display it, you never enforce it
 
-- New request starts **Pending**.
-- Three assigned reviewers per request: senior reviewer A, senior reviewer B (two
-  **distinct** identities with the senior role), and one CEO reviewer.
-- **Any one of the three rejects → Denied immediately.** Terminal. Later approvals
-  cannot reverse it.
-- **Approved only when all three** (both distinct seniors **and** the CEO) approve.
-- Anything else → stays **Pending**.
-- At most **one** decision per reviewer per request.
-- A **requester cannot vote on their own request**, even if they hold a reviewer role.
-- Denied is terminal; a revision is a **new record**, old decision preserved.
-- Transitions must be **atomic / transaction-safe** against concurrent votes.
+Your UI must *explain* this accurately, but the server is the only thing that decides it:
 
-Identity for every check and vote record is the **verified TideCloak `sub` claim**,
-taken from the token — never from the request body. Display names are presentation only.
+- New request → **Pending**.
+- Three assigned reviewers: senior A, senior B (two **distinct** identities), and one CEO.
+- **Any one rejection → Denied immediately.** Terminal; later approvals cannot reverse it.
+- **Approved only when all three** approve (both distinct seniors **and** the CEO).
+- Anything else → **Pending**.
+- One decision per reviewer per request; requester cannot vote on their own request.
 
-## Gate sequence — do these in order, stop at each for monitor sign-off
+## Gate sequence — in order, stop at each for monitor sign-off
 
-**G-prep — Docker + Tide account.** Report the exact state. If Docker isn't installed,
-say so and stop; installing it is a human decision (download size, possible reboot).
-Do not attempt workarounds that skip the real TideCloak server.
+**P1-G0 — Zero-dependency groundwork.** No app needed yet.
+- Draft `contract.ts` exactly per `MASTER-PLAN.md` §4 (types only). This is **shared** —
+  Person 2 must agree to it before anyone builds against it.
+- Build synthetic fixtures: ~6–8 spend requests covering every state — pending with 0/1/2
+  approvals, denied-by-senior, denied-by-CEO, fully approved, and one where a rejection
+  arrived *after* approvals (proves terminal denial).
+- Write the demo script: 2 minutes, beat by beat, narrating only what will be real.
+- Draft the README five-prompt overview (≤300 words), with setup in a **separate** section.
 
-**G0 — Contract freeze.** Write `types/contract.ts` exactly as specified in
-MASTER-PLAN.md §4. Nothing else gets built before the monitor confirms this.
+**P1-G1 — UI sandbox running.** Scaffold a **plain** Next.js app locally
+(`npx create-next-app`, no TideCloak) purely as a UI workbench. Build all five screens
+against fixtures:
+1. Request list — title, amount, requester, status, reviewer progress ("1 of 3 approved")
+2. New request form — title, amount, currency, category, business reason
+3. Request detail — full info + each assigned reviewer's state (pending/approved/rejected)
+4. Reviewer controls — approve / reject + optional short comment
+5. Decision result panel — plain-language *why*: "Senior reviewer B hasn't voted yet",
+   "Rejected by the CEO reviewer — this is final"
 
-**G1 — Real login works (critical path).** Scaffold the official starter
-(`npm init @tidecloak/nextjs@latest`), complete Tide enrollment, register the client.
-Prove: one trivial protected endpoint returns **401 without a token** and **200 with a
-valid one**. Confirm the TideCloak config file is `.gitignore`d. If this fails, stop and
-fix it — do not add features on top of broken auth.
+**P1-G2 — Explanation logic correct.** The status-explanation function must mirror the
+exact rule for every fixture state, including terminal denial. This is **display only** —
+it must never be the thing that decides anything.
 
-**G2 — Decision rule proven, before any UI wiring.** Implement the rule as a pure
-function plus persistence, with unit tests covering **all** of:
-0 / 1 / 2 / 3 approvals · rejection at each of the three slots · rejection after
-approvals · approval attempted after a rejection (must not flip) · duplicate vote from
-same sub · self-review by requester · vote from an unassigned user · vote into the
-wrong slot. Tests must be green before you report done.
+**P1-G3 — Port + integrate.** When Person 2 pushes the scaffolded TideCloak app, move
+your pages/components in, **delete the stub**, and wire to the real API per the §4
+contract. Handle **401 / 403 / 409 / 422** as first-class UI states with clear messages —
+the server rejecting you is normal and must look intentional, not broken.
 
-**G3 — Governed roles tested.** Configure `spend_requester` (default-only),
-`spend_senior_reviewer` on exactly two identities, `spend_ceo_reviewer` on one — all
-through the **Tide console's governed process**, never from app code. Then prove a lone
-grant is **not yet effective**, and that it becomes effective only after the required
-approvals. Capture evidence of **both** states. Also confirm the realm's **actual**
-quorum threshold with the real number of enrolled admins.
-
-**G4 — Server-side enforcement on every route.** Token verification using the
-documented TideCloak Next.js verifier. Reject: missing, expired, wrong issuer, wrong
-audience/client, tampered signature. Per-vote authorization: verified role **and**
-caller's `sub` matches the reviewer assigned to that slot **and** caller is not the
-requester **and** request still pending **and** no prior vote from that sub.
-
-## Storage requirements
-
-Server-side SQLite (recommend `better-sqlite3`). One write transaction per vote that
-inserts the decision, recomputes status, and commits together. Required constraints:
-`UNIQUE(request_id, reviewer_sub)` and `UNIQUE(request_id, role_slot)`. Enable foreign
-keys explicitly. **Never** use `localStorage` or any client store as the authority for
-roles or status.
+**P1-G4 — README + demo.** Record against the **frozen commit**. Under 100 MB (target
+under 50 MB), ≤2 minutes. Narration must match what was actually tested.
 
 ## Hard prohibitions
 
-- **No mock or fake authentication**, ever, not even temporarily "to unblock."
-- **No client-supplied roles.** Roles come only from the verified token.
-- **No app UI or API that grants roles.** Role assignment is Tide-console-only.
-- **No realm-admin credentials in the app** or in any env file it reads.
-- **Do not invent TideCloak API names, imports, or endpoints.** If the installed SDK
-  or official docs don't confirm it, report it as unverified and ask — don't guess.
-  Confirm the verifier's exact import name and signature against the installed package.
-- **Do not claim a protection you have not tested.** See the claims rules below.
-- Do not commit tokens, enrollment links, credentials, `.env`, or database files.
-
-## Claims discipline
-
-When you report something works, state **what you actually ran and observed**. The
-monitor will reject claims without evidence.
-
-- Say "tested: returned 401 with no token, 200 with valid token" — not "auth is secure."
-- Never claim the stored request status is protected from someone with app or database
-  access. It isn't. That's a known limitation to disclose, not hide.
-- If you could not confirm a Tide mechanism within the time budget, implement the review
-  rule accurately, state the remaining trust boundary, and **do not fake a cryptographic
-  or quorum guarantee.**
+- **The stub must be visibly labelled as a stub while it exists, and deleted before the
+  demo.** Never present a stub or mock login as TideCloak protection — the spec forbids
+  it explicitly and judges are told to look for it.
+- **Never treat the UI as a security control.** A hidden or disabled button is not
+  protection. Always assume the user can call the API directly.
+- **Never hold roles or request status in client state as the authority.** Render what
+  the server returns. No `localStorage` as a source of truth.
+- **Never claim in README, UI copy, or narration that something is protected unless
+  Person 2 has tested it** and the monitor has confirmed the evidence.
+- Do not commit tokens, `.env`, enrollment links, or database files.
+- Do not fabricate approval states in the recorded demo. Record a real run.
 
 ## Coordination protocol
 
@@ -127,26 +100,28 @@ Update `coordination/status.json` after every meaningful step:
 
 ```json
 {
-  "current_gate": "G-prep|G0|G1|G2|G3|G4",
+  "current_gate": "P1-G0|P1-G1|P1-G2|P1-G3|P1-G4",
   "task": "what you are doing right now",
   "status": "working|blocked|awaiting-review|failed",
   "last_command": "the exact command you ran",
   "last_error": null,
   "files_changed": [],
-  "tests": { "passing": 0, "failing": 0, "names": [] },
-  "evidence": ["concrete observed results, e.g. 'GET /api/me -> 401 without token'"],
+  "screens_done": [],
+  "stub_present": true,
+  "evidence": ["concrete observed results, e.g. 'detail page renders all 3 reviewer slots for fixture r-004'"],
   "unverified_assumptions": ["anything you could not confirm"],
   "needs_human": null,
   "timestamp": ""
 }
 ```
 
-Also write `coordination/log_tail.txt` — the last ~100 lines of **real** stdout/stderr,
-not a paraphrase.
+Keep `stub_present` accurate — the monitor gates the demo on it being `false`.
 
-Before starting any new work, read `coordination/instructions.md` and do what the
-monitor's latest `Action` says. If you believe it's wrong, say so in
-`unverified_assumptions` and wait — don't silently do something different.
+Also write `coordination/log_tail.txt` — the last ~100 lines of **real** stdout/stderr.
 
-Set `status: "blocked"` and fill `needs_human` when you hit anything requiring a human:
-installing software, completing Tide enrollment, console clicks, or a decision about scope.
+Before starting new work, read `coordination/instructions.md` and do what the monitor's
+latest `Action` says. If you think it's wrong, say so in `unverified_assumptions` and
+wait — don't silently do something else.
+
+Set `status: "blocked"` and fill `needs_human` for anything requiring a person:
+decisions about scope, recording the video, or waiting on Person 2's app.

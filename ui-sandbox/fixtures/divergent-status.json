@@ -1,0 +1,47 @@
+{
+  "note": "Sandbox-only UI fixture. It is deliberately inconsistent so the mismatch warning can be exercised: the decision log has all three approvals, but the server status says pending. The badge must show pending and the warning must be visible. This is not part of the canonical 8-fixture set.",
+  "requests": [
+    {
+      "id": "r-ui-900",
+      "title": "UI check - three approvals but server status is pending",
+      "amountMinor": 32500,
+      "currency": "USD",
+      "category": "UI fixture",
+      "businessReason": "This request exists only to prove that the badge renders request.status and that a decision-log mismatch is surfaced visibly.",
+      "requesterSub": "staff_requester_02",
+      "createdAt": "2026-10-22T08:00:00Z",
+      "assignedReviewers": {
+        "senior_a": "senior_reviewer_01",
+        "senior_b": "senior_reviewer_02",
+        "ceo": "ceo_reviewer_01"
+      },
+      "decisions": [
+        {
+          "requestId": "r-ui-900",
+          "reviewerSub": "senior_reviewer_01",
+          "roleSlot": "senior_a",
+          "vote": "approve",
+          "comment": "Looks reasonable.",
+          "decidedAt": "2026-10-22T08:30:00Z"
+        },
+        {
+          "requestId": "r-ui-900",
+          "reviewerSub": "senior_reviewer_02",
+          "roleSlot": "senior_b",
+          "vote": "approve",
+          "comment": "Approved in the sandbox log.",
+          "decidedAt": "2026-10-22T09:00:00Z"
+        },
+        {
+          "requestId": "r-ui-900",
+          "reviewerSub": "ceo_reviewer_01",
+          "roleSlot": "ceo",
+          "vote": "approve",
+          "comment": "Also approved in the sandbox log.",
+          "decidedAt": "2026-10-22T09:30:00Z"
+        }
+      ],
+      "status": "pending"
+    }
+  ]
+}

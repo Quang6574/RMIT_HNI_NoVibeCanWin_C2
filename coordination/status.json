@@ -1,20 +1,56 @@
 {
-  "current_gate": "G-prep",
-  "task": "Nothing started. Awaiting prerequisites.",
-  "status": "blocked",
-  "last_command": "",
+  "current_gate": "P1-G1",
+  "task": "Built the five spend-approval screens and the API-client seam in ui-sandbox/, and prepared the P1-G3 handoff without integrating it. Applied the required Phase B correction: replaced hard links with one-line re-export shims and removed the sandbox fixture copy. Verified 8/8 fixtures, lint, production build, headless rendering, the r-007 terminal-denial state, the r-ui-900 mismatch warning, reviewer controls, create-request flow, and all five forced error states.",
+  "status": "awaiting-review",
+  "last_command": "npm run check:explain; npm run lint; npm run build; headless Chrome screen/error checkpoints; CDP approve+create smoke",
   "last_error": null,
-  "files_changed": [],
-  "tests": { "passing": 0, "failing": 0, "names": [] },
-  "evidence": [
-    "docker CLI not found on Windows PATH or in bash",
-    "localhost:8080 returned no response (HTTP 000)",
-    "node_modules absent",
-    "public/tidecloak.json absent",
-    "no Next.js app subfolder present",
-    "node v24.11.0 and npm 11.6.1 available"
+  "files_changed": [
+    "ui-sandbox/ (new Next.js 16.4.2 / React 19.3.0 App Router sandbox)",
+    "ui-sandbox/types/contract.ts (one-line re-export shim to ../../contract)",
+    "ui-sandbox/lib-ui/explain-status.ts (one-line re-export shim to ../../lib-ui/explain-status)",
+    "ui-sandbox/lib-ui/api-client.ts (fixture/fetch adapters behind DATA_SOURCE; five required functions)",
+    "ui-sandbox/lib-ui/slots.ts (slot labels/state and display formatting)",
+    "ui-sandbox/components/ (AppHeader, StatusBadge, ReviewerProgress, DecisionResultPanel, ApiErrorNotice, ReviewerControls, NewRequestForm)",
+    "ui-sandbox/app/ (layout, list, detail, new-request, state-lab, globals)",
+    "ui-sandbox/fixtures/divergent-status.json (sandbox-only r-ui-900 mismatch fixture)",
+    "ui-sandbox/scripts/check-explain.mjs",
+    "ui-sandbox/package.json",
+    "ui-sandbox/next.config.ts",
+    "ui-sandbox/.gitignore",
+    "coordination/status.json",
+    "coordination/log_tail.txt"
   ],
-  "unverified_assumptions": [],
-  "needs_human": "Install Docker Desktop (not installed), then complete Tide account enrollment via the link the Next.js initializer prints.",
-  "timestamp": "2026-10-22T00:00:00Z"
+  "screens_done": [
+    "Request list — / — 9 fixture cards (r-ui-900 plus r-001..r-008), request.status badge, three named reviewer slots, persistent synthetic banner",
+    "Request detail — /requests/[id] — full record, named reviewer slots, decisions, terminal-denial state for r-007",
+    "Decision result panel — DecisionResultPanel — explainStatus explanation, progress, server-vs-log metadata, visible mismatch warning",
+    "New request form — /requests/new — client validation, 422 display, create via the API seam",
+    "Reviewer controls — /requests/[id] — assigned-slot approve/reject convenience, closed/blocked/voted states, explicit server-gate copy",
+    "Error-state lab — /state-lab — forced 401/403/404/409/422 states (extra sandbox diagnostic screen)"
+  ],
+  "stub_present": true,
+  "evidence": [
+    "Phase B correction applied. ui-sandbox/types/contract.ts is exactly `export * from '../../contract';`; ui-sandbox/lib-ui/explain-status.ts is exactly `export * from '../../lib-ui/explain-status';`. The sandbox fixtures/spend-requests.json copy was removed and ui-sandbox/lib-ui/api-client.ts imports `../../fixtures/spend-requests.json`. Canonical root files were not edited; their SHA-256 hashes are unchanged. `npm run check:explain` re-ran with `RESULT: 8 matched, 0 failed, 8 fixtures` and exit 0.",
+    "`npm run lint` exited 0. `npm run build` exited 0 on Next 16.4.2 with Turbopack resolving the outside-root re-export shims. Routes built: `/` (static), `/requests/[id]` (partial prerender), `/requests/new` (static), `/state-lab` (static). The only build warning is the known multiple-lockfile/workspace-root warning.",
+    "Headless Chrome at http://localhost:3010 rendered the request list with 9 cards: sandbox r-ui-900 plus canonical r-001..r-008. The list shows request.status badges, all three named slots (Senior reviewer A, Senior reviewer B, CEO reviewer), the persistent `stub_present: true` banner, and the mismatch warning for r-ui-900.",
+    "Detail r-007 rendered badge `data-status=\"denied\"`, progress `2 of 3 approved`, all three slot names, `Votes are closed`, and the terminal-denial explanation. This is the required terminal-denial evidence.",
+    "Detail r-ui-900 rendered badge `data-status=\"pending\"` while the decision log read approved with progress `3 of 3 approved`, plus the visible warning `The badge shows the server value`. The badge never used derivedStatus.",
+    "New-request form rendered title, USD amount, category, business-reason fields, the non-editable-requester note, and the client/service validation copy. Reviewer controls with the sandbox deep link `?viewer=senior_reviewer_01` on r-001 rendered Approve/Reject and the assigned-slot explanation.",
+    "CDP smoke test passed after the shim correction: approving as senior_reviewer_01 recorded the sandbox decision (notice + voted state, badge stayed pending); creating a request navigated to `/requests/r-ui-001` and rendered the entered `$1,234.56` amount.",
+    "State lab forced each required code through the fixture adapter and rendered five distinct treatments: 401 tone-warning, 403 tone-neutral, 404 tone-muted, 409 tone-conflict, 422 tone-danger. Each had a distinct title, body, action copy, and adapter message.",
+    "No changes were made to app/api/**, root lib/**, tests/**, TideCloak config, or Challenge 1 files (src/, index.html, vite.config.js). Only ui-sandbox/ and the two coordination files were touched.",
+    "Stub-only machinery to delete or replace at integration: setActingSub, ACTING_SUB_EVENT, listSandboxIdentities, resetSandboxData, the `?viewer=` sandbox deep link, forceError plus /state-lab, the in-memory fixture store/fake server, the `DATA_SOURCE='fixtures'` default, and the synthetic banner. Real identity and authorization must come from the verified token, server-side."
+  ],
+  "unverified_assumptions": [
+    "P1-G3 integration was not attempted. The fetch adapter is shape-correct for /api/me, /api/requests, /api/requests/[id], and /api/requests/[id]/decisions, but it has not run against a real server.",
+    "The screens are client components. Token-authenticated server data must be passed through the API seam or server routes; that client/server boundary has not been exercised with TideCloak.",
+    "Framework mismatch risk: this sandbox is Next 16.4.2 / React 19.3.0. Person 2's TideCloak starter may pin different versions, so App Router APIs (including the Suspense boundary required for useParams) may need adjustment at port time.",
+    "Turbopack inferred the repository root as the workspace root because of multiple lockfiles. The outside-root shims build here, but Person 2's workspace layout may resolve differently.",
+    "The fixture adapter intentionally returns every request regardless of the simulated viewer so all states are inspectable. The real API scopes the list and enforces object-level visibility; the banner discloses this difference.",
+    "The r-ui-900 mismatch fixture is sandbox-only and deliberately inconsistent; it is not part of the canonical 8-fixture set.",
+    "P1-G4 video/recording was not attempted. No real approval state was fabricated.",
+    "The sandbox viewer switcher is not authentication. It must not be carried into the integrated app as a role source."
+  ],
+  "needs_human": null,
+  "timestamp": "2026-10-22T14:11:51+07:00"
 }

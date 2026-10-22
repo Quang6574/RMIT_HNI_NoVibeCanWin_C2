@@ -1,0 +1,355 @@
+{
+  "fixturesVersion": 1,
+  "description": "Synthetic spend requests for the Challenge 2 UI workbench. Each scenario wraps one contract-shaped SpendRequest and labels the state it proves.",
+  "authorityWarning": "Synthetic demo data only. This file is never an authority for roles or status. At integration and in the recorded demo, status and decisions must come from the server response.",
+  "identityNote": "Display names are presentation only; they are never authorization input. The sub values below are stand-ins for the real TideCloak sub claims and must be reconciled with Person 2's realm before any end-to-end test.",
+  "identities": {
+    "staff_requester_01": {
+      "displayName": "Riley Chen",
+      "demoLogin": "staff_requester_01"
+    },
+    "staff_requester_02": {
+      "displayName": "Jordan Patel",
+      "demoLogin": "staff_requester_02"
+    },
+    "senior_reviewer_01": {
+      "displayName": "Avery Nguyen",
+      "demoLogin": "senior_reviewer_01"
+    },
+    "senior_reviewer_02": {
+      "displayName": "Sam Okafor",
+      "demoLogin": "senior_reviewer_02"
+    },
+    "ceo_reviewer_01": {
+      "displayName": "Morgan Lee",
+      "demoLogin": "ceo_reviewer_01"
+    }
+  },
+  "scenarios": [
+    {
+      "fixtureId": "r-001",
+      "stateLabel": "Pending - 0 of 3 approved (no votes)",
+      "expectedStatus": "pending",
+      "expectedProgress": "0 of 3 approved",
+      "expectedExplanation": "Pending. No reviewer has voted yet. Senior reviewer A, senior reviewer B and the CEO reviewer all still need to respond.",
+      "proves": "A new request starts Pending with all three reviewer slots waiting.",
+      "request": {
+        "id": "r-001",
+        "title": "Accessible keyboard for the design workstation",
+        "amountMinor": 18900,
+        "currency": "USD",
+        "category": "Equipment",
+        "businessReason": "The current keyboard is not usable with the accessibility switch the new starter uses.",
+        "requesterSub": "staff_requester_01",
+        "createdAt": "2026-10-20T09:15:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [],
+        "status": "pending"
+      }
+    },
+    {
+      "fixtureId": "r-002",
+      "stateLabel": "Pending - 1 of 3 approved (senior A only)",
+      "expectedStatus": "pending",
+      "expectedProgress": "1 of 3 approved",
+      "expectedExplanation": "Pending. Senior reviewer A approved. Senior reviewer B and the CEO reviewer have not voted. All three distinct approvals are required.",
+      "proves": "One approval is not enough, and each outstanding slot is named.",
+      "request": {
+        "id": "r-002",
+        "title": "Team lunch after the Q4 release",
+        "amountMinor": 42000,
+        "currency": "USD",
+        "category": "Team events",
+        "businessReason": "Twelve staff worked the release weekend; this covers a casual team lunch.",
+        "requesterSub": "staff_requester_02",
+        "createdAt": "2026-10-20T11:40:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-002",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "approve",
+            "comment": "Within the team budget.",
+            "decidedAt": "2026-10-20T13:05:00Z"
+          }
+        ],
+        "status": "pending"
+      }
+    },
+    {
+      "fixtureId": "r-003",
+      "stateLabel": "Pending - 2 of 3 approved (both seniors, CEO waiting)",
+      "expectedStatus": "pending",
+      "expectedProgress": "2 of 3 approved",
+      "expectedExplanation": "Pending. Both senior reviewers approved, but the CEO reviewer has not voted. All three distinct approvals are required.",
+      "proves": "Two senior approvals still do not approve a request; the CEO is a separate required slot.",
+      "request": {
+        "id": "r-003",
+        "title": "Annual licence for the design system tool",
+        "amountMinor": 96000,
+        "currency": "USD",
+        "category": "Software",
+        "businessReason": "The client rebrand needs shared component libraries; the licence is annual and per-seat.",
+        "requesterSub": "staff_requester_01",
+        "createdAt": "2026-10-19T08:00:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-003",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "approve",
+            "decidedAt": "2026-10-19T09:20:00Z"
+          },
+          {
+            "requestId": "r-003",
+            "reviewerSub": "senior_reviewer_02",
+            "roleSlot": "senior_b",
+            "vote": "approve",
+            "comment": "Needed for the client rebrand.",
+            "decidedAt": "2026-10-19T15:45:00Z"
+          }
+        ],
+        "status": "pending"
+      }
+    },
+    {
+      "fixtureId": "r-004",
+      "stateLabel": "Denied - senior reviewer B rejected (no prior approvals)",
+      "expectedStatus": "denied",
+      "expectedProgress": "0 of 3 approved",
+      "expectedExplanation": "Denied. Senior reviewer B rejected this request. One rejection is final; later approvals cannot reverse it.",
+      "proves": "A single rejection at a senior slot denies immediately.",
+      "request": {
+        "id": "r-004",
+        "title": "Standing desk for the support bay",
+        "amountMinor": 74900,
+        "currency": "USD",
+        "category": "Equipment",
+        "businessReason": "Two support staff share the bay and requested height-adjustable desks.",
+        "requesterSub": "staff_requester_02",
+        "createdAt": "2026-10-18T10:10:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-004",
+            "reviewerSub": "senior_reviewer_02",
+            "roleSlot": "senior_b",
+            "vote": "reject",
+            "comment": "Existing desks meet the ergonomic standard.",
+            "decidedAt": "2026-10-18T11:30:00Z"
+          }
+        ],
+        "status": "denied"
+      }
+    },
+    {
+      "fixtureId": "r-005",
+      "stateLabel": "Denied - CEO rejected after both seniors approved",
+      "expectedStatus": "denied",
+      "expectedProgress": "2 of 3 approved",
+      "expectedExplanation": "Denied. The CEO reviewer rejected this request after both senior reviewers approved. One rejection is final; later approvals cannot reverse it.",
+      "proves": "Rejection by the CEO is equally final, even when two approvals already exist.",
+      "request": {
+        "id": "r-005",
+        "title": "Conference travel to the Singapore service design summit",
+        "amountMinor": 185000,
+        "currency": "USD",
+        "category": "Travel",
+        "businessReason": "Three workshops are directly relevant to the current client project.",
+        "requesterSub": "staff_requester_01",
+        "createdAt": "2026-10-17T07:30:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-005",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "approve",
+            "decidedAt": "2026-10-17T09:00:00Z"
+          },
+          {
+            "requestId": "r-005",
+            "reviewerSub": "senior_reviewer_02",
+            "roleSlot": "senior_b",
+            "vote": "approve",
+            "comment": "Good value for three workshops.",
+            "decidedAt": "2026-10-17T09:40:00Z"
+          },
+          {
+            "requestId": "r-005",
+            "reviewerSub": "ceo_reviewer_01",
+            "roleSlot": "ceo",
+            "vote": "reject",
+            "comment": "Travel is frozen this quarter.",
+            "decidedAt": "2026-10-17T14:20:00Z"
+          }
+        ],
+        "status": "denied"
+      }
+    },
+    {
+      "fixtureId": "r-006",
+      "stateLabel": "Approved - all three distinct reviewers approved",
+      "expectedStatus": "approved",
+      "expectedProgress": "3 of 3 approved",
+      "expectedExplanation": "Approved. Senior reviewer A, senior reviewer B and the CEO reviewer all approved this request.",
+      "proves": "Only all three distinct approvals produce Approved.",
+      "request": {
+        "id": "r-006",
+        "title": "Accessibility audit of the checkout flow",
+        "amountMinor": 120000,
+        "currency": "USD",
+        "category": "Professional services",
+        "businessReason": "An external audit is required for the Q4 accessibility milestone.",
+        "requesterSub": "staff_requester_02",
+        "createdAt": "2026-10-16T08:45:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-006",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "approve",
+            "comment": "Budget is available in the current quarter.",
+            "decidedAt": "2026-10-16T11:00:00Z"
+          },
+          {
+            "requestId": "r-006",
+            "reviewerSub": "senior_reviewer_02",
+            "roleSlot": "senior_b",
+            "vote": "approve",
+            "decidedAt": "2026-10-16T11:30:00Z"
+          },
+          {
+            "requestId": "r-006",
+            "reviewerSub": "ceo_reviewer_01",
+            "roleSlot": "ceo",
+            "vote": "approve",
+            "comment": "Approved - required for the Q4 accessibility milestone.",
+            "decidedAt": "2026-10-16T16:05:00Z"
+          }
+        ],
+        "status": "approved"
+      }
+    },
+    {
+      "fixtureId": "r-007",
+      "stateLabel": "Denied - terminal rejection with later approvals recorded (display robustness)",
+      "expectedStatus": "denied",
+      "expectedProgress": "2 of 3 approved",
+      "expectedExplanation": "Denied. Senior reviewer A rejected this request, and that decision is final. Later approvals from senior reviewer B and the CEO reviewer cannot reverse it.",
+      "proves": "The explanation logic must treat a rejection as terminal even if later approval records are present.",
+      "note": "SYNTHETIC DISPLAY FIXTURE: a correct server refuses votes after denial with 409 and would never persist this shape. It exists only so the UI can be checked against a hostile or inconsistent record; the UI must still read Denied.",
+      "request": {
+        "id": "r-007",
+        "title": "Incentive payments for the customer research panel",
+        "amountMinor": 65000,
+        "currency": "USD",
+        "category": "Research",
+        "businessReason": "Twenty panel participants need a small voucher for a ninety-minute session.",
+        "requesterSub": "staff_requester_01",
+        "createdAt": "2026-10-15T09:00:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-007",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "reject",
+            "comment": "This duplicates the study already funded in September.",
+            "decidedAt": "2026-10-15T10:00:00Z"
+          },
+          {
+            "requestId": "r-007",
+            "reviewerSub": "senior_reviewer_02",
+            "roleSlot": "senior_b",
+            "vote": "approve",
+            "comment": "I support the panel; the September study covered a different segment.",
+            "decidedAt": "2026-10-15T10:30:00Z"
+          },
+          {
+            "requestId": "r-007",
+            "reviewerSub": "ceo_reviewer_01",
+            "roleSlot": "ceo",
+            "vote": "approve",
+            "comment": "Fine by me.",
+            "decidedAt": "2026-10-15T11:00:00Z"
+          }
+        ],
+        "status": "denied"
+      }
+    },
+    {
+      "fixtureId": "r-008",
+      "stateLabel": "Pending - 2 of 3 approved (senior A and CEO, senior B waiting)",
+      "expectedStatus": "pending",
+      "expectedProgress": "2 of 3 approved",
+      "expectedExplanation": "Pending. Senior reviewer A and the CEO reviewer approved, but senior reviewer B has not voted. All three distinct approvals are required.",
+      "proves": "The CEO approval does not stand in for a senior reviewer; the missing senior slot is named.",
+      "request": {
+        "id": "r-008",
+        "title": "Replacement on-call phone",
+        "amountMinor": 88000,
+        "currency": "USD",
+        "category": "Equipment",
+        "businessReason": "The current handset no longer holds a charge through an on-call shift.",
+        "requesterSub": "staff_requester_02",
+        "createdAt": "2026-10-14T12:00:00Z",
+        "assignedReviewers": {
+          "senior_a": "senior_reviewer_01",
+          "senior_b": "senior_reviewer_02",
+          "ceo": "ceo_reviewer_01"
+        },
+        "decisions": [
+          {
+            "requestId": "r-008",
+            "reviewerSub": "senior_reviewer_01",
+            "roleSlot": "senior_a",
+            "vote": "approve",
+            "comment": "Replacement is cheaper than a failed on-call response.",
+            "decidedAt": "2026-10-14T13:15:00Z"
+          },
+          {
+            "requestId": "r-008",
+            "reviewerSub": "ceo_reviewer_01",
+            "roleSlot": "ceo",
+            "vote": "approve",
+            "comment": "Approved in principle.",
+            "decidedAt": "2026-10-14T17:40:00Z"
+          }
+        ],
+        "status": "pending"
+      }
+    }
+  ]
+}
