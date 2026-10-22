@@ -2,33 +2,51 @@
 
 # Spend Approval — RMIT × Tide, Challenge 2
 
-The runnable application is **`spend-approval/`**. It combines Person 1's screens with Person 2's API and SQLite storage. Real Tide sign-in is the default; an explicitly labelled local simulation lets the team demonstrate the full workflow during Tide network congestion. Expenses are fictional; no money moves.
+Spend Approval is a workspace where two senior reviewers and a CEO must unanimously approve each expense, with every decision recorded and explained.
 
 ## Project overview
 
 ### 1. Vision & originality
 
-Staff submit an expense to two distinct senior reviewers and the CEO. All three must approve; any rejection is final. Each request explains who still needs to respond and why it is pending, approved or denied.
+We turn expense approval into an explicit three-person agreement. Staff submit requests to two distinct senior reviewers and the CEO. All three must approve; any rejection is final. The interface explains who still needs to respond and why a request is pending, approved or denied.
 
 ### 2. Trust constraint insight
 
-Three approvals mean little if one administrator can impersonate reviewers or grant themselves authority. We separate verified identity, governed reviewer roles and the three specific subjects assigned to a request. Independent governance still needs a live quorum demonstration.
+Three approvals mean little if one administrator can impersonate reviewers or grant themselves authority. Separating verified identity, governed roles and assigned reviewers makes accountable delegation possible without relying on an informal sign-off chain. Independent governance still requires a live quorum demonstration.
 
 ### 3. Value & impact
 
-Requesters can track their own expenses. Reviewers see their assigned queue. Each decision records its verified subject, slot, time and optional comment, replacing ambiguous sign-off messages with a readable history.
+Staff, managers and finance teams get a shared decision history instead of scattered messages. For example, a $1,200 equipment request remains pending after two approvals; a CEO rejection clearly stops it. Requesters track their expenses, while reviewers see their assigned queue.
 
 ### 4. Why TideCloak matters
 
-In live mode, TideCloak supplies sign-in and signed access tokens. Every API call verifies the token; every vote also checks its role and assigned subject. The application has no role-granting endpoint or realm-admin credential. Role grants belong in TideCloak governance. Local simulation replaces identity verification with four fixed demo identities; it does not establish live quorum protection.
+Live mode verifies TideCloak access tokens and checks each voter's role and assigned identity. Role grants belong in TideCloak governance; the application cannot grant them. This connects authenticated people to specific approval responsibilities. During network congestion, an explicitly labelled simulation substitutes four demo identities; it does not prove live Tide governance.
 
 ### 5. Prototype & storytelling
 
-The demonstration follows two requests: two senior approvals followed by a CEO rejection, and a second request approved by all three. The UI displays the server's result. Automated tests cover these rules, unauthorized attempts, persistence, rollback and simultaneous votes. Simulation is disclosed on every screen. Four-account live voting and the final recording remain outstanding.
+Judges can submit an expense, switch between four demo identities, and watch two approvals followed by a CEO rejection. A second request demonstrates unanimous approval. The backend enforces decisions and persists their history. Expenses are fictional; no money moves. Four-account live voting remains outstanding.
+
+## Team members
+
+| Name | Student ID |
+| --- | --- |
+| Luong Gia Bao | s4040517 |
+| Le Dam Quan | s4031504 |
+| Tran Dinh Hai | s4041605 |
+| Nguyen Phu Minh Quang | s3996843 |
+
+## Setup
+
+The runnable application is **`spend-approval/`**. Install Node **22.13–24.x** and Git, then clone the repository:
+
+```powershell
+git clone https://github.com/Quang6574/RMIT_HNI_NoVibeCanWin_C2.git
+cd RMIT_HNI_NoVibeCanWin_C2
+```
 
 ## Local simulation
 
-The user relayed updated organizer guidance permitting simulated Tide protections while the network is overloaded, and explicitly approved this mode. It is separate from the live integration.
+Use this mode to demonstrate the full workflow while Tide account linking is unavailable. It runs independently of the live integration, following the organizers' guidance permitting simulated protections during network congestion.
 
 ```powershell
 cd spend-approval
@@ -40,9 +58,9 @@ Open [localhost:3001](http://localhost:3001/). No Docker, Tide account or adapte
 
 The banner explicitly states that Tide verification and governance are simulated. Demo records use `data/spend-demo.sqlite`; live records remain in `data/spend.sqlite`. The demo runs on loopback port 3001 only and is disabled in production. It never activates automatically when Tide is unavailable.
 
-## Run
+## Live TideCloak setup
 
-Use Node **22.13–24.x**, Git and a running TideCloak development instance.
+Real Tide sign-in is the default. Start your TideCloak development instance before running the app.
 
 1. Follow [the setup guide](spend-approval/SETUP.md) to obtain the client configuration, enroll accounts and configure roles/reviewer subjects.
 2. From the repository:
@@ -67,7 +85,7 @@ Stop the development server before building. The production server uses the same
 
 The integrated app has passed a production build, 27 automated tests and all 8 shared display fixtures. Real signed-in identity/list requests worked before the reported Tide outage. A real account without the requester role was refused when submitting an expense. Missing and invalid live tokens return 401. Simulation tests additionally check mode isolation, fixed identities, origin restrictions and separate storage. See [the validation report](spend-approval/SECURITY-TESTS.md).
 
-The four demo user records exist locally. Their enrollment, governed spending roles, independent quorum test and live voting flows still need completion. Follow [the remaining checklist](spend-approval/REMAINING.md). The [two-minute demo script](demo/DEMO-SCRIPT.md) is a plan; no completed Challenge 2 MP4 is claimed. Root `Video.mp4` is unrelated.
+Four intended live test-user records exist in the development realm. Their enrollment, governed spending roles, independent quorum test and live voting flows still need completion. Follow [the remaining checklist](spend-approval/REMAINING.md). The [simulation demo guide](demo/SIMULATION-DEMO.md) and [live demo script](demo/DEMO-SCRIPT.md) describe the recording flows; no completed Challenge 2 MP4 is claimed.
 
 ## Layout
 
