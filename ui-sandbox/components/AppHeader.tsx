@@ -46,7 +46,9 @@ export default function AppHeader() {
         <strong>SANDBOX STUB</strong>
         <span>
           Synthetic fixture data. No real authentication, no TideCloak, no server. Votes
-          are simulated locally and are not approvals. <code>stub_present: true</code>
+          are simulated locally and are not approvals. This sandbox also shows every
+          request regardless of who is viewing — the real API scopes by identity.{' '}
+          <code>stub_present: true</code>
         </span>
       </div>
 
