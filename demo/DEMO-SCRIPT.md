@@ -1,5 +1,7 @@
 # Demo script — 2:00 maximum
 
+> Updated organizer guidance, relayed and approved by the user on 22 October 2026, permits a disclosed simulation during network congestion. Use [SIMULATION-DEMO.md](SIMULATION-DEMO.md) for that recording. The original live-integration script and its preconditions remain below for later live validation; do not apply its no-simulation precondition to the newly approved simulation mode.
+
 **Status: plan, not a record of completed work.** No end-to-end TideCloak run has happened
 yet for the complete four-account voting flow. The integrated app at `spend-approval/`
 has real sign-in and a live missing-role refusal verified; see its SECURITY-TESTS.md.

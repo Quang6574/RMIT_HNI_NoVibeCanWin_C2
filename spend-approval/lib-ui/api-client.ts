@@ -8,14 +8,25 @@ type NewRequest = Pick<SpendRequest, 'title' | 'amountMinor' | 'currency' | 'cat
 type NewDecision = { roleSlot: RoleSlot; vote: Vote; comment?: string };
 
 export function createSpendApi(getToken: () => Promise<string | null>) {
+  return createApi(async () => {
+    const token = await getToken();
+    return token ? { Authorization: `Bearer ${token}` } : null;
+  });
+}
+
+export function createDemoApi(identity: string) {
+  return createApi(async () => ({ 'X-Spend-Demo-Identity': identity }));
+}
+
+function createApi(getHeaders: () => Promise<Record<string, string> | null>) {
   async function request<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
     try {
-      const token = await getToken();
-      if (!token) return { ok: false, code: 401, message: 'Sign in again to continue.' };
+      const authHeaders = await getHeaders();
+      if (!authHeaders) return { ok: false, code: 401, message: 'Sign in again to continue.' };
       const response = await fetch(path, {
         method: body === undefined ? 'GET' : 'POST',
         credentials: 'omit', cache: 'no-store',
-        headers: { Authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+        headers: { ...authHeaders, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       });
       const data = await response.json();

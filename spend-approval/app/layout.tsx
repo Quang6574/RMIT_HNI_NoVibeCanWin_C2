@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import {
-  TideCloakProvider
-} from '@tidecloak/nextjs'
-import tcConfig from '../tidecloak.json'
+import { connection } from 'next/server'
+import { demoEnabled } from '@/lib/demo'
+import { getTideConfig } from '@/lib/config'
+import SessionProvider from '@/components/SessionProvider'
 import AppShell from '@/components/AppShell'
 import './globals.css'
 
@@ -17,13 +17,15 @@ interface RootLayoutProps {
   children: ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  await connection()
+  const config = demoEnabled() ? null : getTideConfig()
   return (
     <html lang="en">
       <body>
-        <TideCloakProvider config={tcConfig}>
+        <SessionProvider config={config}>
           <AppShell>{children}</AppShell>
-        </TideCloakProvider>
+        </SessionProvider>
       </body>
     </html>
   )

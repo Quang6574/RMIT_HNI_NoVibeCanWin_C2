@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createSpendApi } from '../lib-ui/api-client.ts';
+import { createDemoApi, createSpendApi } from '../lib-ui/api-client.ts';
 import { parseAmountToMinor } from '../lib-ui/amount.ts';
 
 test('expense form parses exact cents within server limits without rounding fractional cents', () => {
@@ -49,4 +49,15 @@ test('transport preserves actionable API errors and catches network/non-JSON fai
   badResponse.mock.restore();
   t.mock.method(globalThis, 'fetch', async () => { throw new Error('Network down'); });
   assert.equal((await api.getMe() as { code: string }).code, 'network');
+});
+
+test('simulation transport uses an explicit demo identity and never fabricates a bearer token', async t => {
+  t.mock.method(globalThis, 'fetch', async (_path: string, init: RequestInit) => {
+    const headers = new Headers(init.headers);
+    assert.equal(headers.get('X-Spend-Demo-Identity'), 'demo-ceo');
+    assert.equal(headers.has('Authorization'), false);
+    assert.equal(init.credentials, 'omit');
+    return Response.json({ sub: 'demo-ceo', roles: ['spend_ceo_reviewer'] });
+  });
+  assert.equal((await createDemoApi('demo-ceo').getMe()).ok, true);
 });

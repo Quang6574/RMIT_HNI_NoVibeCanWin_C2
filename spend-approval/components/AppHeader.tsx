@@ -5,8 +5,32 @@ import { useTideCloak } from '@tidecloak/nextjs';
 import { useSpendApi } from '@/lib-ui/use-spend-api';
 import type { ApiFailure, Me } from '@/lib-ui/api-client';
 import ApiErrorNotice from './ApiErrorNotice';
+import { useDemoSession } from './SessionProvider';
+import { DEMO_IDENTITIES } from '@/lib-ui/demo-identities';
+import { useRouter } from 'next/navigation';
 
 export default function AppHeader() {
+  const demo = useDemoSession();
+  const router = useRouter();
+  if (!demo) return <LiveHeader />;
+  return <>
+    <a className="skip-link" href="#main-content">Skip to content</a>
+    <div className="simulation-banner" role="status"><strong>LOCAL SIMULATION</strong> Demo identities are selected below. Live Tide verification and governance are not being used.</div>
+    <header className="app-header"><div className="topbar">
+      <Link className="brand" href="/">Spend Approval</Link>
+      <nav className="main-nav" aria-label="Main navigation"><Link href="/">Requests</Link>
+        {demo.identity === 'demo-requester' ? <Link href="/requests/new">New request</Link> : null}
+      </nav>
+      <label className="demo-picker">Demo identity{' '}
+        <select value={demo.identity} onChange={event => { demo.selectIdentity(event.target.value); router.push('/'); }}>
+          {DEMO_IDENTITIES.map(actor => <option key={actor.sub} value={actor.sub}>{actor.displayName}</option>)}
+        </select>
+      </label>
+    </div></header>
+  </>;
+}
+
+function LiveHeader() {
   const api = useSpendApi();
   const { logout } = useTideCloak();
   const [me, setMe] = useState<Me | null>(null);

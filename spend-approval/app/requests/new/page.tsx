@@ -14,7 +14,7 @@ export default function NewRequestPage() {
           <h1>Create a spend request</h1>
           <p className="lede">
             Describe the expense and why it is needed. It will be submitted under your
-            signed-in identity to the three assigned reviewers.
+            current identity to the three assigned reviewers.
           </p>
         </div>
       </div>

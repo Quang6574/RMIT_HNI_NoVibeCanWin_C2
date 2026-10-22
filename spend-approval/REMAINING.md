@@ -1,5 +1,7 @@
 # Remaining work before the recorded demo
 
+**Simulation update:** the user approved the organizer's congestion workaround on 22 October 2026. Run `npm run demo` and follow `demo/SIMULATION-DEMO.md` for the disclosed simulation recording. The live account/governance steps below are no longer prerequisites for that simulation demo; they remain necessary before claiming live Tide protection.
+
 Code integration is complete locally; live account/governance verification is incomplete. Last checked 22 October 2026. Do these in order.
 
 1. Finish linking `staff_requester_01`, `senior_reviewer_01`, `senior_reviewer_02` and `ceo_reviewer_01` to four separate Tide identities. The user records exist. Do not reuse one Tide identity for all four.

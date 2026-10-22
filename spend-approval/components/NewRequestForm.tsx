@@ -7,8 +7,10 @@ import { useSpendApi } from '@/lib-ui/use-spend-api';
 import type { ApiFailure } from '@/lib-ui/api-client';
 import ApiErrorNotice from './ApiErrorNotice';
 import { parseAmountToMinor } from '@/lib-ui/amount';
+import { useDemoSession } from './SessionProvider';
 
 export default function NewRequestForm() {
+  const demo = useDemoSession();
   const api = useSpendApi();
   const router = useRouter();
   const [title, setTitle] = useState('');
@@ -154,8 +156,8 @@ export default function NewRequestForm() {
       </div>
 
       <div className="form-requester-note">
-        <strong>Requester is not editable.</strong> The API assigns the requester from the
-        verified Tide identity. After submission, the amount, reason and reviewers are fixed.
+        <strong>Requester is not editable.</strong> The API assigns the requester from your{' '}
+        {demo ? 'selected demo identity' : 'verified Tide identity'}. After submission, the amount, reason and reviewers are fixed.
       </div>
 
       <div className="form-actions">

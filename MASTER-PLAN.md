@@ -2,6 +2,8 @@
 
 Authoritative build plan for the two-person team. Supersedes `PROJECT-PLAN.md`.
 
+> Update, 22 October 2026: the user relayed organizer guidance permitting simulated Tide protections during network congestion and explicitly requested local simulation. The implementation in `spend-approval/` supports a clearly labelled, opt-in simulation on localhost:3001, with four fixed demo identities and separate SQLite data. Live Tide verification remains the default and is never silently bypassed on failure. This supersedes the earlier prohibition on a disclosed simulation for this prototype; the approval rule and server-side decision checks below remain unchanged. Simulated identity/governance is not evidence of live Tide security or independent quorum protection.
+
 ---
 
 ## 0. Locked decisions

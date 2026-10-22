@@ -1,4 +1,4 @@
-import { HttpError } from './rules.ts';
+import { HttpError, isHttpError } from './rules.ts';
 
 export async function readJson(request: Request): Promise<unknown> {
   if (request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json') throw new HttpError(422, 'Send an application/json body.');
@@ -19,7 +19,7 @@ export async function readJson(request: Request): Promise<unknown> {
     for (const part of parts) { bytes.set(part, offset); offset += part.length; }
     return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
   } catch (error) {
-    if (error instanceof HttpError) throw error;
+    if (isHttpError(error)) throw error;
     throw new HttpError(422, 'Invalid JSON body.');
   } finally { reader.releaseLock(); }
 }

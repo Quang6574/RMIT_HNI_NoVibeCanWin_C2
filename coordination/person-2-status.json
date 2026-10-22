@@ -1,8 +1,8 @@
 {
-  "current_gate": "G4",
-  "task": "Person 1 UI integrated with Person 2 authenticated API and SQLite; live role/governance checks pending",
+  "current_gate": "G5",
+  "task": "Disclosed four-identity local simulation implemented and tested end to end; live Tide integration retained as default",
   "status": "awaiting-review",
-  "last_command": "npm test; npm run build; live signed-in UI and HTTP checks",
+  "last_command": "npm test; npm run build; browser submission/approval/rejection; HTTP refusal and restart persistence checks",
   "last_error": null,
   "files_changed": [
     ".gitignore",
@@ -23,10 +23,12 @@
       "Body boundary",
       "SQLite persistence, rollback and concurrent connections",
       "Bearer API transport and exact cents",
-      "Shared display fixtures"
+      "Shared display fixtures",
+      "Simulation mode, origin and data isolation",
+      "HTTP errors across module reloads"
     ],
     "failing": 0,
-    "passing": 20
+    "passing": 27
   },
   "evidence": [
     "20 automated tests and 8 display fixtures pass",
@@ -36,7 +38,17 @@
     "All five endpoints return 401 without token; invalid bearer returns 401",
     "No runtime fixture adapter or simulated identity switch",
     "Three existing reviewer IDs populated in ignored local environment",
-    "Current remote Person 1 work fast-forwarded to d5e1baa; no push"
+    "Current remote Person 1 work fast-forwarded to d5e1baa; no push",
+    "User explicitly approved local simulation after relaying organizer guidance",
+    "Browser created two requests and exercised all four simulated identities",
+    "One/two approvals remain pending; three approve; CEO rejection after two denies",
+    "Actual HTTP self-review/wrong slot 403 and late/duplicate vote 409",
+    "Outcomes and three-decision histories survive process restart",
+    "Two demo records and zero live records confirm separate data",
+    "Live server refuses demo header with 401",
+    "Updated production build and all 27 tests plus 8 display fixtures pass",
+    "Simulation launcher uses the installed webpack development compiler after repeated Turbopack reloads on this Windows workspace; browser and HTTP behavior rechecked",
+    "Final TypeScript check passes"
   ],
   "unverified_assumptions": [
     "Four-account enrollment and governed spending role assignments",
@@ -45,6 +57,6 @@
     "PKCE enforcement and role revocation latency",
     "Completed demo MP4"
   ],
-  "needs_human": "Complete Tide account linking and governed role review; run live voting and independent quorum checks, then record the demo. See spend-approval/REMAINING.md.",
-  "timestamp": "2026-10-22T09:20:55.1859903Z"
+  "needs_human": "Try localhost:3001 using the Demo identity selector and record the disclosed simulation video. Live Tide enrollment, role governance and independent quorum validation remain deferred.",
+  "timestamp": "2026-10-22T10:16:58.7418663Z"
 }

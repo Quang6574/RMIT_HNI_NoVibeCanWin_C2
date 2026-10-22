@@ -2,7 +2,7 @@
 
 # Spend Approval — RMIT × Tide, Challenge 2
 
-The runnable application is **`spend-approval/`**. It combines Person 1's screens with Person 2's authenticated API and SQLite storage. Expenses are fictional; no money moves.
+The runnable application is **`spend-approval/`**. It combines Person 1's screens with Person 2's API and SQLite storage. Real Tide sign-in is the default; an explicitly labelled local simulation lets the team demonstrate the full workflow during Tide network congestion. Expenses are fictional; no money moves.
 
 ## Project overview
 
@@ -20,11 +20,25 @@ Requesters can track their own expenses. Reviewers see their assigned queue. Eac
 
 ### 4. Why TideCloak matters
 
-TideCloak supplies real sign-in and signed access tokens. Every API call verifies the token; every vote also checks the current token's role and assigned subject. The application has no role-granting endpoint or realm-admin credential. Role grants belong in TideCloak governance. We have not proved resistance to a single bootstrap administrator.
+In live mode, TideCloak supplies sign-in and signed access tokens. Every API call verifies the token; every vote also checks its role and assigned subject. The application has no role-granting endpoint or realm-admin credential. Role grants belong in TideCloak governance. Local simulation replaces identity verification with four fixed demo identities; it does not establish live quorum protection.
 
 ### 5. Prototype & storytelling
 
-The planned demonstration follows two real requests: two senior approvals followed by a CEO rejection, and a second request approved by all three. The UI displays the server's result. Automated tests cover these rules, unauthorized attempts, persistence, rollback and simultaneous votes. Four-account live voting and the final recording remain outstanding.
+The demonstration follows two requests: two senior approvals followed by a CEO rejection, and a second request approved by all three. The UI displays the server's result. Automated tests cover these rules, unauthorized attempts, persistence, rollback and simultaneous votes. Simulation is disclosed on every screen. Four-account live voting and the final recording remain outstanding.
+
+## Local simulation
+
+The user relayed updated organizer guidance permitting simulated Tide protections while the network is overloaded, and explicitly approved this mode. It is separate from the live integration.
+
+```powershell
+cd spend-approval
+npm ci
+npm run demo
+```
+
+Open [localhost:3001](http://localhost:3001/). No Docker, Tide account or adapter file is required for this mode. Use **Demo identity** to switch between staff requester, senior A, senior B and CEO. Submit as staff, then switch reviewers to vote. All three approvals are required; any rejection is final. The backend validates and persists decisions using the same rules as live mode.
+
+The banner explicitly states that Tide verification and governance are simulated. Demo records use `data/spend-demo.sqlite`; live records remain in `data/spend.sqlite`. The demo runs on loopback port 3001 only and is disabled in production. It never activates automatically when Tide is unavailable.
 
 ## Run
 
@@ -51,7 +65,7 @@ Stop the development server before building. The production server uses the same
 
 ## Current evidence and remaining work
 
-The integrated app has passed a production build, 20 automated tests and all 8 shared display fixtures. Real signed-in identity/list requests work. A real account without the requester role was refused when submitting an expense. Missing and invalid tokens return 401. See [the validation report](spend-approval/SECURITY-TESTS.md).
+The integrated app has passed a production build, 27 automated tests and all 8 shared display fixtures. Real signed-in identity/list requests worked before the reported Tide outage. A real account without the requester role was refused when submitting an expense. Missing and invalid live tokens return 401. Simulation tests additionally check mode isolation, fixed identities, origin restrictions and separate storage. See [the validation report](spend-approval/SECURITY-TESTS.md).
 
 The four demo user records exist locally. Their enrollment, governed spending roles, independent quorum test and live voting flows still need completion. Follow [the remaining checklist](spend-approval/REMAINING.md). The [two-minute demo script](demo/DEMO-SCRIPT.md) is a plan; no completed Challenge 2 MP4 is claimed. Root `Video.mp4` is unrelated.
 

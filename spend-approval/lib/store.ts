@@ -3,8 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import type { Decision, RoleSlot, SpendRequest } from '../types/contract.ts';
-import { applyDecision, canView, HttpError, parseRequest, parseDecision, validateReviewers } from './rules.ts';
+import { applyDecision, canView, HttpError, isHttpError, parseRequest, parseDecision, validateReviewers } from './rules.ts';
 import type { Actor } from './rules.ts';
+import { demoEnabled } from './demo.ts';
 
 type RequestRow = Omit<SpendRequest, 'decisions' | 'assignedReviewers'> & Record<RoleSlot, string>;
 const selectRequest = `SELECT id, title, amount_minor AS amountMinor, currency, category,
@@ -75,7 +76,7 @@ export class SpendStore {
       .map(row => this.load(row.id as string)!).filter(request => canView(request, actor));
   }
   create(actor: Actor, body: unknown, reviewers: Record<RoleSlot, string>): SpendRequest {
-    if (!actor.roles.includes('spend_requester')) throw new HttpError(403, 'The verified spend_requester role is required.');
+    if (!actor.roles.includes('spend_requester')) throw new HttpError(403, 'The spend_requester role is required.');
     const input = parseRequest(body);
     validateReviewers(reviewers);
     if (Object.values(reviewers).includes(actor.sub)) throw new HttpError(403, 'The requester must differ from all three configured reviewers.');
@@ -103,16 +104,23 @@ export class SpendStore {
         return { status: request.status, request };
       });
     } catch (error) {
-      if (error instanceof HttpError) this.audit(actor, id, 'decision.denied', String(error.status));
+      if (isHttpError(error)) this.audit(actor, id, 'decision.denied', String(error.status));
       throw error;
     }
   }
 }
 
-const globalStore = globalThis as typeof globalThis & { spendStore?: SpendStore };
+const globalStore = globalThis as typeof globalThis & { spendStores?: Map<string, SpendStore> };
+export function storePath(): string {
+  return resolve(process.cwd(), 'data', demoEnabled() ? 'spend-demo.sqlite' : 'spend.sqlite');
+}
 export function getStore(): SpendStore {
-  return globalStore.spendStore ??= new SpendStore(resolve(process.cwd(), 'data', 'spend.sqlite'));
+  const stores = globalStore.spendStores ??= new Map();
+  const path = storePath();
+  if (!stores.has(path)) stores.set(path, new SpendStore(path));
+  return stores.get(path)!;
 }
 export function configuredReviewers(): Record<RoleSlot, string> {
+  if (demoEnabled()) return { senior_a: 'demo-senior-a', senior_b: 'demo-senior-b', ceo: 'demo-ceo' };
   return { senior_a: process.env.SPEND_SENIOR_A_SUB ?? '', senior_b: process.env.SPEND_SENIOR_B_SUB ?? '', ceo: process.env.SPEND_CEO_SUB ?? '' };
 }

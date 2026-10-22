@@ -60,6 +60,20 @@ a {
 }
 .skip-link:focus { top: 1rem; }
 
+.simulation-banner {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 0.7rem clamp(1rem, 4vw, 3rem);
+  background: #fff0bd;
+  color: #674000;
+  border-bottom: 1px solid #d7bb67;
+  font-size: 0.86rem;
+}
+.simulation-banner strong { margin-right: 0.7rem; }
+.demo-picker { margin-left: auto; font-size: 0.86rem; font-weight: 650; }
+.demo-picker select { padding: 0.5rem; border: 1px solid var(--line-strong); border-radius: 8px; background: white; }
+
 .account-notice {
   width: min(1180px, 100% - 2rem);
   margin: 1rem auto 0;

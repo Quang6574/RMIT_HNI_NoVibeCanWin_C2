@@ -5,3 +5,13 @@ spend-approval now uses real Tide sign-in, bearer APIs, fixed reviewer assignmen
 Real signed-in GET /api/me and GET /api/requests return 200. A real roleless account POST /api/requests returns 403. Missing-token calls on all five endpoints and an invalid bearer return 401.
 The three local reviewer IDs are populated. User linking, governed role grants, independent quorum checks, live voting and the Challenge 2 video remain.
 No credentials, tokens, adapter configuration or database included in Git. No GitHub push performed.
+2026-10-22 local simulation update explicitly requested by the user after organizer congestion guidance.
+Opt-in development-only simulation runs on loopback port 3001; real Tide flow remains default on port 3000.
+Four fixed demo identities use the same role, assignment, validation and SQLite transaction rules. Separate data/spend-demo.sqlite. No fake JWTs and no fallback from live verification.
+27 automated tests and 8 display fixtures pass. Production build and TypeScript pass.
+Browser tests created two fictional requests, exercised all four identities, and confirmed pending at one/two approvals, approved at three and denied after CEO rejection following two approvals.
+Direct demo HTTP checks return 403 for self/wrong-slot review and 409 for duplicate/final/late votes. Restart preserves status and three decisions on each record. Live database remains at zero requests.
+Live server refuses a demo identity with 401. Demo rejects missing/unknown identities with 401 and cross-origin requests with 403.
+Fixed development module-reload error identity so policy refusals do not become generic 500 responses. Added a regression test.
+No real roles or accounts were changed. No GitHub push performed. Live Tide/quorum proof remains incomplete; demo script now discloses simulation.
+Simulation launcher uses Next webpack development mode to avoid observed repeated Turbopack reloads on this Windows workspace. Rechecked stable UI, persisted approved/denied records and 403/409/401 responses.

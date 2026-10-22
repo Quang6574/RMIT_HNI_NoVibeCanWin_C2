@@ -4,6 +4,10 @@ This app started from the official TypeScript `@tidecloak/create-nextjs@0.14.33`
 
 ## Existing local setup
 
+For the congestion workaround, run `npm run demo` in this folder and open [localhost:3001](http://localhost:3001/). Docker, Tide enrollment and `tidecloak.json` are unnecessary for this explicitly labelled simulation. Use the header's Demo identity selector for requester, senior A, senior B and CEO. Data persists in `data/spend-demo.sqlite`; no live identities or records are used. Missing/unknown demo identities are rejected, demo requests are restricted to same-origin loopback port 3001, and production always uses live verification. Restarting the demo preserves records. The same request validation, role/assignment checks, vote transactions and terminal states apply in both modes.
+
+`npm run dev` and `npm start` retain the live flow below. Simulation does not activate when a real sign-in fails. The `demo` script sets the server-only `SPEND_DEMO_MODE=1` flag for its own development process; do not put that flag in the shared `.env.local`.
+
 1. Start Docker Desktop and the existing `spend-approval-tidecloak` container. Its persistent volume is `spend-approval-tidecloak-data`; keep it. TideCloak is bound to `127.0.0.1:8080`.
 2. The realm is `spend-approval`, the public client is `spend-approval-client`. Realm initialization is deliberately excluded from this app. Do not delete the volume or recreate the realm to fix a pending request.
 3. Download this client's adapter configuration from its Credentials tab to `spend-approval/tidecloak.json`. This ignored file must refer to the same realm/client and contain the signed origin for `http://localhost:3000`. Do not hand-edit cryptographic signatures.

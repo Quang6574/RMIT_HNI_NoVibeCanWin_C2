@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "demo": "node scripts/demo.mjs",
     "build": "next build",
     "start": "next start",
-    "test": "node --experimental-strip-types --test tests/rules.test.ts tests/store.test.ts tests/auth.test.ts tests/body.test.ts tests/api-client.test.ts && node --experimental-strip-types ../ui-sandbox/scripts/check-explain.mjs"
+    "test": "node --experimental-strip-types --test tests/rules.test.ts tests/store.test.ts tests/auth.test.ts tests/body.test.ts tests/api-client.test.ts tests/demo.test.ts && node --experimental-strip-types ../ui-sandbox/scripts/check-explain.mjs"
   },
   "dependencies": {
     "next": "16.x",

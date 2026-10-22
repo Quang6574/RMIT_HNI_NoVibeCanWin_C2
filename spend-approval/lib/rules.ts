@@ -6,9 +6,16 @@ export type DecisionInput = { roleSlot: RoleSlot; vote: Vote; comment?: string }
 export const slotRoles: Record<RoleSlot, string> = {
   senior_a: 'spend_senior_reviewer', senior_b: 'spend_senior_reviewer', ceo: 'spend_ceo_reviewer',
 };
+const httpErrorTag = Symbol.for('spend-approval.http-error');
 export class HttpError extends Error {
+  [httpErrorTag] = true;
   status: number;
   constructor(status: number, message: string) { super(message); this.status = status; }
+}
+// Next dev retains stores across module reloads, so constructor identity is not stable.
+export function isHttpError(error: unknown): error is HttpError {
+  return error instanceof Error && httpErrorTag in error && error[httpErrorTag] === true &&
+    'status' in error && typeof error.status === 'number' && [401, 403, 404, 409, 422, 503].includes(error.status);
 }
 function object(value: unknown, allowed: string[]): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => !allowed.includes(key))) {
@@ -46,7 +53,7 @@ export function canView(request: SpendRequest, actor: Actor): boolean {
 }
 export function applyDecision(request: SpendRequest, actor: Actor, input: DecisionInput): SpendRequest {
   if (request.requesterSub === actor.sub) throw new HttpError(403, 'A requester cannot review their own request.');
-  if (request.assignedReviewers[input.roleSlot] !== actor.sub || !actor.roles.includes(slotRoles[input.roleSlot])) throw new HttpError(403, 'The assigned identity and verified reviewer role are both required.');
+  if (request.assignedReviewers[input.roleSlot] !== actor.sub || !actor.roles.includes(slotRoles[input.roleSlot])) throw new HttpError(403, 'The assigned identity and reviewer role are both required.');
   if (request.status !== 'pending') throw new HttpError(409, 'This request is already final.');
   if (request.decisions.some(decision => decision.reviewerSub === actor.sub || decision.roleSlot === input.roleSlot)) throw new HttpError(409, 'This reviewer has already voted.');
   const decision: Decision = { ...input, requestId: request.id, reviewerSub: actor.sub, decidedAt: new Date().toISOString() };

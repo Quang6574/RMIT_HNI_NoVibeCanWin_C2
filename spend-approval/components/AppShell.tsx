@@ -3,8 +3,15 @@ import { usePathname } from 'next/navigation';
 import { useTideCloak } from '@tidecloak/nextjs';
 import type { ReactNode } from 'react';
 import AppHeader from './AppHeader';
+import { useDemoSession } from './SessionProvider';
 
 export default function AppShell({ children }: { children: ReactNode }) {
+  const demo = useDemoSession();
+  if (demo) return <Workspace>{children}</Workspace>;
+  return <LiveShell>{children}</LiveShell>;
+}
+
+function LiveShell({ children }: { children: ReactNode }) {
   const { authenticated, isInitializing, initError, login } = useTideCloak();
   const pathname = usePathname();
   if (pathname === '/auth/redirect') return children;
@@ -17,5 +24,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <button className="btn btn-primary" onClick={() => void login()}>Log in with Tide</button>
     </div></main>
   );
+  return <Workspace>{children}</Workspace>;
+}
+
+function Workspace({ children }: { children: ReactNode }) {
   return <><AppHeader /><main className="shell" id="main-content">{children}</main><footer className="site-footer">Demo expenses only. No payments move.</footer></>;
 }

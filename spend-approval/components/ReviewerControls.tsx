@@ -71,7 +71,7 @@ export default function ReviewerControls({
           <h2 id="reviewer-controls-heading">Cast one decision</h2>
         </div>
         <span className="acting-chip">
-          Signed in as <code>{actingSub ?? 'session unavailable'}</code>
+          Reviewer identity <code>{actingSub ?? 'session unavailable'}</code>
         </span>
       </div>
 
