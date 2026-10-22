@@ -1,0 +1,20 @@
+{
+  "current_gate": "G-prep",
+  "task": "Nothing started. Awaiting prerequisites.",
+  "status": "blocked",
+  "last_command": "",
+  "last_error": null,
+  "files_changed": [],
+  "tests": { "passing": 0, "failing": 0, "names": [] },
+  "evidence": [
+    "docker CLI not found on Windows PATH or in bash",
+    "localhost:8080 returned no response (HTTP 000)",
+    "node_modules absent",
+    "public/tidecloak.json absent",
+    "no Next.js app subfolder present",
+    "node v24.11.0 and npm 11.6.1 available"
+  ],
+  "unverified_assumptions": [],
+  "needs_human": "Install Docker Desktop (not installed), then complete Tide account enrollment via the link the Next.js initializer prints.",
+  "timestamp": "2026-10-22T00:00:00Z"
+}

@@ -1,0 +1,1 @@
+(no run yet — worker overwrites this with the last ~100 lines of real stdout/stderr once work starts)
